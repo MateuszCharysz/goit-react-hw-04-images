@@ -4,7 +4,7 @@ import ImageGalleryItem from 'components/imageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 import Modal from 'components/modal/Modal';
 
-export class ImageGallery extends Component {
+export class ImageGallery extends Component { //TODO zmiana z klasy na useState
 
   state = {
     bigUrl: '',

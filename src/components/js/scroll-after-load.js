@@ -3,5 +3,5 @@ export const scrollAfterLoad = height => {
     top: height,
     behavior: 'smooth',
   });
-  console.log('why it does not work?');
+  console.log('why it does not work?'); //TODO do usunięcia consol log
 };

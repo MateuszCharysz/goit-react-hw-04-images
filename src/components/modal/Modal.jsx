@@ -1,34 +1,39 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types'
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
-export class Modal extends Component {
+export const Modal = ({ descr, source, closeModalMouse, closeModalKey }) => {
+  //TODO niby działa przygotować się do posprzątania
 
-  render() {
-    const properties = this.props
-    const {descr, source, closeModalMouse,} = properties
-    return (
-      <div className={css.overlay} onClick={closeModalMouse}>
-        <div className={css.modal}>
-          Modal
-          <img src={source} alt={descr} />
-        </div>
+  useEffect(() => {
+    document.addEventListener('keydown', closeModalKey);
+    return () => {
+      document.removeEventListener('keydown', closeModalKey);
+    };
+  }, [closeModalKey]);
+
+  return (
+    <div className={css.overlay} onClick={closeModalMouse}>
+      <div className={css.modal}>
+        Modal
+        <img src={source} alt={descr} />
       </div>
-    );
-  }
-  componentDidMount() {
-    document.addEventListener('keydown', this.props.closeModalKey)
-  }
-  componentWillUnmount(){
-    document.removeEventListener('keydown', this.props.closeModalKey)
-  }
-}
+    </div>
+  );
+
+  // componentDidMount() {
+  //   document.addEventListener('keydown', closeModalKey)
+  // }
+  // componentWillUnmount(){
+  //   document.removeEventListener('keydown', closeModalKey)
+  // }
+};
 
 Modal.propTypes = {
   descr: PropTypes.string.isRequired,
   source: PropTypes.string.isRequired,
   closeModalMouse: PropTypes.func.isRequired,
-  closeModalKey: PropTypes.func.isRequired
-}
+  closeModalKey: PropTypes.func.isRequired,
+};
 
 export default Modal;

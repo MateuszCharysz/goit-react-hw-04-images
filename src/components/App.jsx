@@ -5,10 +5,10 @@ import Button from './button/Button';
 import ImageGallery from './imageGallery/ImageGallery';
 import { apiUrl } from './js/api-url';
 import { pixabayApiLuncher } from './js/pixabay-api-luncher';
-import { ThreeDots } from 'react-loader-spinner';
+import { ThreeDots } from 'react-loader-spinner'; //TODO fix spinner to be visible
 import { scrollAfterLoad } from './js/scroll-after-load';
 
-export class App extends Component {
+export class App extends Component { //TODO zmiana na funkcyjny (useState i useEfect)
   state = {
     querry: '',
     page: 1,
