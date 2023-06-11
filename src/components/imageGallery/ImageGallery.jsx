@@ -1,61 +1,60 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from 'components/imageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 import Modal from 'components/modal/Modal';
 
-export class ImageGallery extends Component { //TODO zmiana z klasy na useState
-
-  state = {
-    bigUrl: '',
-    description: '',
-  };
-  clearState = () => {
-    this.setState({ bigUrl: '', description: '' });
-  };
-
-  closeModalEsc = e => {
-    if (e.key === 'Escape') this.clearState();
-  };
-
-  closeModalClick = () => {
-    this.clearState();
+export const ImageGallery = ({ data }) => {
+  //TODO niby gotowe do wyczyszczenia
+  const [bigUrl, setBigUrl] = useState('');
+  const [description, setDescription] = useState('');
+  // state = {
+  //   bigUrl: '',
+  //   description: '',
+  // };
+  const clearState = () => {
+    setBigUrl('');
+    setDescription('');
   };
 
-  handleItem = callback => {
+  const closeModalEsc = e => {
+    if (e.key === 'Escape') clearState();
+  };
+
+  const closeModalClick = () => {
+    clearState();
+  };
+
+  const handleItem = callback => {
     const { bigFormatUrl, alt } = callback;
-    this.setState({ bigUrl: bigFormatUrl, description: alt });
+    setBigUrl(bigFormatUrl);
+    setDescription(alt);
   };
 
-  render() {
-    const data = this.props.data;
-    const state = this.state;
-    const {bigUrl, description} = state
-    return (
-      <>
-        <ul className={css.gallery}>
-          {data.map(({ id, webformatURL, tags, largeImageURL }) => (
-            <ImageGalleryItem
-              key={id}
-              smallUrl={webformatURL}
-              alt={tags}
-              bigFormatUrl={largeImageURL}
-              galleryStateFunc={this.handleItem}
-            />
-          ))}
-        </ul>
-        {bigUrl !== '' && (
-          <Modal
-            descr={description}
-            source={bigUrl}
-            closeModalMouse={this.closeModalClick}
-            closeModalKey={this.closeModalEsc}
+  return (
+    <>
+      <ul className={css.gallery}>
+        {data.map(({ id, webformatURL, tags, largeImageURL }) => (
+          <ImageGalleryItem
+            key={id}
+            smallUrl={webformatURL}
+            alt={tags}
+            bigFormatUrl={largeImageURL}
+            galleryStateFunc={handleItem}
           />
-        )}
-      </>
-    );
-  }
-}
+        ))}
+      </ul>
+      {bigUrl !== '' && (
+        <Modal
+          descr={description}
+          source={bigUrl}
+          closeModalMouse={closeModalClick}
+          closeModalKey={closeModalEsc}
+        />
+      )}
+    </>
+  );
+};
 
 ImageGallery.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
