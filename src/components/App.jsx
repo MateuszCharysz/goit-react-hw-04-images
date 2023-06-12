@@ -1,5 +1,5 @@
 // import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Searchbar from './searchbar/Searchbar';
 import Button from './button/Button';
 import ImageGallery from './imageGallery/ImageGallery';
@@ -8,91 +8,131 @@ import { pixabayApiLuncher } from './js/pixabay-api-luncher';
 import { ThreeDots } from 'react-loader-spinner'; //TODO fix spinner to be visible
 import { scrollAfterLoad } from './js/scroll-after-load';
 
-export class App extends Component { //TODO zmiana na funkcyjny (useState i useEfect)
-  state = {
-    querry: '',
-    page: 1,
-    perPage: 12,
-    isLoading: false,
-    pictures: [],
-    error: null,
+export const App = () => {
+  //TODO zmiana na funkcyjny (useState i useEfect)
+  const [querry, setQuerry] = useState('');
+  const [page, setPage] = useState(1);
+  const perPage = 12;
+  const [isLoading, setIsLoading] = useState(false);
+  const [pictures, setPictures] = useState([]);
+  const [error, setError] = useState(null);
+
+  const refPage = useRef(page);
+  const refQuerry = useRef(querry);
+
+  // const apiUrlState = async () => {
+  //   setIsLoading(true);
+  //   if (page === 1) {
+  //     try {
+  //       const answer = await pixabayApiLuncher(apiUrl(querry, page, perPage));
+  //       setPictures(answer.data.hits);
+  //     } catch (er) {
+  //       setError(er);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   } else {
+  //     try {
+  //       const answer = await pixabayApiLuncher(apiUrl(querry, page, perPage));
+  //       setPictures(prevState => {
+  //         console.log(prevState);
+  //         console.log(answer.data.hits);
+  //         return [...prevState, ...answer.data.hits]
+  //       });
+  //     } catch (er) {
+  //       setError(er);
+  //     } finally {
+  //       setIsLoading(false);
+  //       if (page > 1) {
+  //         scrollAfterLoad(520);
+  //       }
+  //     }
+  //   }
+  // };
+
+  const submitHandlerSearch = value => {
+    setQuerry(value);
+    setPage(1);
   };
 
-  apiUrlState = async () => {
-    const { querry, page, perPage } = this.state;
-    this.setState({ isLoading: true });
-    if (page === 1) {
-      try {
-        const answer = await pixabayApiLuncher(apiUrl(querry, page, perPage));
-        this.setState({ pictures: answer.data.hits });
-      } catch (er) {
-        this.setState({ error: er });
-      } finally {
-        this.setState({ isLoading: false });
-      }
-    } else {
-      try {
-        const answer = await pixabayApiLuncher(apiUrl(querry, page, perPage));
-        this.setState(prevState => ({
-          pictures: [...prevState.pictures, ...answer.data.hits],
-        }));
-      } catch (er) {
-        this.setState({ error: er });
-      } finally {
-        this.setState({ isLoading: false });
-        if (this.state.page > 1) {
-          scrollAfterLoad(520);
+  const pageHandlerBtn = () => {
+    setPage(prevState => prevState + 1);
+  };
+
+  useEffect(() => {
+    if (refQuerry !== querry || refPage !== page) {
+      const apiUrlState = async () => {
+        setIsLoading(true);
+        if (page === 1) {
+          try {
+            const answer = await pixabayApiLuncher(
+              apiUrl(querry, page, perPage),
+            );
+            setPictures(answer.data.hits);
+          } catch (er) {
+            setError(er);
+          } finally {
+            setIsLoading(false);
+          }
+        } else {
+          try {
+            const answer = await pixabayApiLuncher(
+              apiUrl(querry, page, perPage),
+            );
+            setPictures(prevState => {
+              console.log(prevState);
+              console.log(answer.data.hits);
+              return [...prevState, ...answer.data.hits];
+            });
+          } catch (er) {
+            setError(er);
+          } finally {
+            setIsLoading(false);
+            if (page > 1) {
+              scrollAfterLoad(520);
+            }
+          }
         }
-      }
-    }
-  };
+        // apiUrlState();
+      };
+    apiUrlState()}
+  }, [querry, page]); // TODO zrobić useRef, włożyć w hook?
+  // apiUrlState();
+  return (
+    <>
+      <Searchbar onSubmit={submitHandlerSearch} />
+      {isLoading && (
+        <ThreeDots
+          height="80"
+          width="80"
+          radius="9"
+          color="#2a6ccf"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClassName=""
+          visible={true}
+        />
+      )}
+      {error !== null && <p>Wystąpił błąd: {error}</p>}
+      {pictures.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <ImageGallery data={pictures} />
+          <Button pagehandler={pageHandlerBtn} />
+        </div>
+      )}
+    </>
+  );
+};
+// async componentDidUpdate(prevProps, prevState) {
+//   if (
+//     prevState.querry !== this.state.querry ||
+//     prevState.page !== this.state.page
+//   )
 
-  submitHandlerSearch = value => {
-    this.setState({ querry: value, page: 1 });
-  };
-
-  pageHandlerBtn = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
-
-  render() {
-    const { pictures, isLoading, error } = this.state;
-    return (
-      <>
-        <Searchbar onSubmit={this.submitHandlerSearch} />
-        {isLoading && (
-          <ThreeDots
-            height="80"
-            width="80"
-            radius="9"
-            color="#2a6ccf"
-            ariaLabel="three-dots-loading"
-            wrapperStyle={{}}
-            wrapperClassName=""
-            visible={true}
-          />
-        )}
-        {error !== null && <p>Wystąpił błąd: {error}</p>}
-        {pictures.length > 0 && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <ImageGallery data={this.state.pictures} />
-            <Button pagehandler={this.pageHandlerBtn} />
-          </div>
-        )}
-      </>
-    );
-  }
-  async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.querry !== this.state.querry ||
-      prevState.page !== this.state.page
-    )
-      await this.apiUrlState();
-  }
-}
+//  [...prevState, ...answer.data.hits];
