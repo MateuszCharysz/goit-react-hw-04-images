@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
 export const Modal = ({ descr, source, closeModalMouse, closeModalKey }) => {
-  //TODO niby działa przygotować się do posprzątania
-
   useEffect(() => {
     document.addEventListener('keydown', closeModalKey);
     return () => {
@@ -20,13 +18,6 @@ export const Modal = ({ descr, source, closeModalMouse, closeModalKey }) => {
       </div>
     </div>
   );
-
-  // componentDidMount() {
-  //   document.addEventListener('keydown', closeModalKey)
-  // }
-  // componentWillUnmount(){
-  //   document.removeEventListener('keydown', closeModalKey)
-  // }
 };
 
 Modal.propTypes = {

@@ -5,13 +5,9 @@ import css from './ImageGallery.module.css';
 import Modal from 'components/modal/Modal';
 
 export const ImageGallery = ({ data }) => {
-  //TODO niby gotowe do wyczyszczenia
   const [bigUrl, setBigUrl] = useState('');
   const [description, setDescription] = useState('');
-  // state = {
-  //   bigUrl: '',
-  //   description: '',
-  // };
+
   const clearState = () => {
     setBigUrl('');
     setDescription('');
