@@ -16,6 +16,7 @@ export const App = () => {
   const [pictures, setPictures] = useState([]);
   const [error, setError] = useState(null);
   const [firstRun, setFirstRun] = useState(true);
+  // const refFirstRun = useRef(firstRun);
   const refPage = useRef(page);
   const refQuerry = useRef(querry);
 
@@ -57,12 +58,10 @@ export const App = () => {
   };
 
   useEffect(() => {
-    if (firstRun === true) {
-      console.log('first run');
+    if (firstRun === true && querry==='' ) {
       setFirstRun(false);
     } else {
-      if (refQuerry !== querry || refPage !== page) {
-        console.log('other run');
+      if (!firstRun &&( refQuerry.current !== querry || refPage.current !== page)) {
         apiUrlState();
       }
     }
