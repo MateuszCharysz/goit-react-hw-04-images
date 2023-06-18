@@ -1,5 +1,5 @@
 // import PropTypes from 'prop-types';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Searchbar from './searchbar/Searchbar';
 import Button from './button/Button';
 import ImageGallery from './imageGallery/ImageGallery';
@@ -15,10 +15,6 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pictures, setPictures] = useState([]);
   const [error, setError] = useState(null);
-  const [firstRun, setFirstRun] = useState(true);
-  // const refFirstRun = useRef(firstRun);
-  const refPage = useRef(page);
-  const refQuerry = useRef(querry);
 
   const apiUrlState = useCallback(async () => {
     setIsLoading(true);
@@ -58,14 +54,11 @@ export const App = () => {
   };
 
   useEffect(() => {
-    if (firstRun === true && querry==='' ) {
-      setFirstRun(false);
-    } else {
-      if (!firstRun &&( refQuerry.current !== querry || refPage.current !== page)) {
-        apiUrlState();
-      }
-    }
-  }, [querry, page, apiUrlState, firstRun]);
+    // if (firstRun === true && querry==='' ) {
+    //   setFirstRun(false);
+    // } else {
+    if (querry !== '' || page !== 1) apiUrlState();
+  }, [querry, page, apiUrlState]);
 
   return (
     <>
